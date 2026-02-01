@@ -1,14 +1,34 @@
+import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useEffect } from "react";
+import { getUser, logout } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 function Feed() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(getUser());
+
   useEffect(() => {
-    api.get("/health")
-      .then((res) => console.log("Backend OK:", res.data))
-      .catch((err) => console.error("Backend error:", err));
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    api.get("/user/me")
+      .then((res) => setUser(res.data.user))
+      .catch(() => {
+        logout();
+        navigate("/login");
+      });
   }, []);
 
-  return <h2>Feed Page</h2>;
+  return (
+    <div>
+      <h2>Welcome {user?.name}</h2>
+      <button onClick={() => { logout(); navigate("/login"); }}>
+        Logout
+      </button>
+    </div>
+  );
 }
 
 export default Feed;
