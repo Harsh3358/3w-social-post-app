@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api/axios";
 import { setAuth } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import "../styles/register.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -26,19 +27,74 @@ function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      <input name="name" placeholder="Name" onChange={handleChange} required />
-      <input name="email" placeholder="Email" onChange={handleChange} required />
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <div className="page">
+      <div className="card">
+        <h1 className="title">Register</h1>
+
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label>Full name</label>
+            <input
+              type="text"
+              name="name"               // 🔧 REQUIRED
+              value={form.name}         // 🔧 REQUIRED
+              placeholder="Jon Snow"
+              onChange={handleChange}   // 🔧 REQUIRED
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"              // 🔧 REQUIRED
+              value={form.email}        // 🔧 REQUIRED
+              placeholder="your@email.com"
+              onChange={handleChange}   // 🔧 REQUIRED
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"           // 🔧 REQUIRED
+              value={form.password}     // 🔧 REQUIRED
+              placeholder="••••••"
+              onChange={handleChange}   // 🔧 REQUIRED
+              required
+            />
+          </div>
+
+          <div className="checkbox">
+            <input type="checkbox" />
+            <span>I want to receive updates via email.</span>
+          </div>
+
+          <button className="primary-btn" type="submit">
+            Register
+          </button>
+
+          <div className="divider">
+            <span>or</span>
+          </div>
+
+          <button className="social-btn google">
+            Sign up with Google
+          </button>
+
+          <button className="social-btn facebook">
+            Sign up with Facebook
+          </button>
+
+          <p className="footer-text">
+            Already have an account? <span>Login</span>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 }
 
