@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 function Feed() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(getUser());
+  const user = getUser();
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     if (!user) {
@@ -13,9 +14,10 @@ function Feed() {
       return;
     }
 
-    api.get("/user/me")
-      .then((res) => setUser(res.data.user))
-      .catch(() => {
+    api.get("/posts")
+      .then((res) => setPosts(res.data))
+      .catch((err) => {
+        console.error(err);
         logout();
         navigate("/login");
       });
@@ -23,10 +25,36 @@ function Feed() {
 
   return (
     <div>
-      <h2>Welcome {user?.name}</h2>
-      <button onClick={() => { logout(); navigate("/login"); }}>
-        Logout
-      </button>
+      <h2>Social Feed</h2>
+
+      {posts.length === 0 && <p>No posts yet.</p>}
+
+      {posts.map((post) => (
+        <div
+          key={post._id}
+          style={{
+            border: "1px solid #ccc",
+            padding: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          <strong>{post.username}</strong>
+
+          {post.text && <p>{post.text}</p>}
+
+          {post.imageUrl && (
+            <img
+              src={post.imageUrl}
+              alt="post"
+              style={{ width: "100%", maxWidth: "300px" }}
+            />
+          )}
+
+          <p>
+            👍 {post.likes.length} · 💬 {post.comments.length}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
