@@ -24,19 +24,25 @@ router.post("/", auth, async (req, res) => {
     await post.save();
     return res.status(201).json(post);
   } catch (err) {
-    // DEBUGGING: print the whole error so we can see what's going on
-    console.error("POST /api/posts ERROR:", err && err.message);
-    console.error(err && err.stack);
+    // // DEBUGGING: print the whole error so we can see what's going on
+    // console.error("POST /api/posts ERROR:", err && err.message);
+    // console.error(err && err.stack);
 
     return res.status(400).json({ message: err.message });
   }
 });
 
-// GET /api/posts
+// GET /api/posts?page=1&limit=5
 router.get("/", async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
     const posts = await Post.find()
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .select("-__v");
 
     return res.json(posts);
@@ -44,6 +50,7 @@ router.get("/", async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch posts" });
   }
 });
+
 
 // PUT /api/posts/:id/like
 router.put("/:id/like", auth, async (req, res) => {
