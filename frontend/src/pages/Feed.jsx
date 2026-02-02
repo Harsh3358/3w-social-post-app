@@ -14,6 +14,7 @@ function Feed() {
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -54,6 +55,23 @@ function Feed() {
     }
   };
 
+  // Like Handler
+  const handleLike = async (postId) => {
+    try {
+      const res = await api.put(`/posts/${postId}/like`);
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, likes: res.data.likes }
+            : post
+        )
+      );
+    } catch (err) {
+      alert("Failed to like post");
+    }
+  };
+
   return (
 
     <div>
@@ -83,32 +101,42 @@ function Feed() {
 
       {posts.length === 0 && <p>No posts yet.</p>}
 
-      {posts.map((post) => (
-        <div
-          key={post._id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginBottom: "10px",
-          }}
-        >
-          <strong>{post.username}</strong>
+      {posts.map((post) => {
+        const hasLiked = post.likes.some(
+          (like) => like.userId === user._id
+        );
 
-          {post.text && <p>{post.text}</p>}
+        return (
+          <div
+            key={post._id}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <strong>{post.username}</strong>
 
-          {post.imageUrl && (
-            <img
-              src={post.imageUrl}
-              alt="post"
-              style={{ width: "100%", maxWidth: "300px" }}
-            />
-          )}
+            {post.text && <p>{post.text}</p>}
 
-          <p>
-            👍 {post.likes.length} · 💬 {post.comments.length}
-          </p>
-        </div>
-      ))}
+            {post.imageUrl && (
+              <img
+                src={post.imageUrl}
+                alt="post"
+                style={{ width: "100%", maxWidth: "300px" }}
+              />
+            )}
+
+            <p>
+              <button onClick={() => handleLike(post._id)}>
+                {hasLiked ? "💙" : "🤍"} {post.likes.length}
+              </button>
+
+              · 💬 {post.comments.length}
+            </p>
+          </div>
+        );
+      })}
     </div>
   );
 }
