@@ -13,6 +13,8 @@ function Feed() {
   const [text, setText] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [commentInputs, setCommentInputs] = useState({});
+
 
 
   useEffect(() => {
@@ -72,6 +74,42 @@ function Feed() {
     }
   };
 
+  // Comment Input Change Handler
+  const handleCommentChange = (postId, value) => {
+    setCommentInputs((prev) => ({
+      ...prev,
+      [postId]: value,
+    }));
+  };
+
+  // Add Submit Comment Handler
+  const handleAddComment = async (postId) => {
+    const text = commentInputs[postId];
+
+    if (!text) return;
+
+    try {
+      const res = await api.post(`/posts/${postId}/comment`, { text });
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: res.data }
+            : post
+        )
+      );
+
+      // clear input for this post only
+      setCommentInputs((prev) => ({
+        ...prev,
+        [postId]: "",
+      }));
+    } catch (err) {
+      alert("Failed to add comment");
+    }
+  };
+
+
   return (
 
     <div>
@@ -127,13 +165,37 @@ function Feed() {
               />
             )}
 
+            {/* For likes */}
             <p>
               <button onClick={() => handleLike(post._id)}>
                 {hasLiked ? "💙" : "🤍"} {post.likes.length}
               </button>
-
-              · 💬 {post.comments.length}
             </p>
+
+            {/* For comments */}
+            · 💬 {post.comments.length} 
+            <div style={{ marginTop: "8px" }}>
+              <strong>Comments</strong>
+              {post.comments.map((c, index) => (
+                <div key={index}>
+                  <b>{c.username}:</b> {c.text}
+                </div>
+              ))}
+
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={commentInputs[post._id] || ""}
+                onChange={(e) =>
+                  handleCommentChange(post._id, e.target.value)
+                }
+              />
+
+              <button onClick={() => handleAddComment(post._id)}>
+                Comment
+              </button>
+            </div>
+            
           </div>
         );
       })}
