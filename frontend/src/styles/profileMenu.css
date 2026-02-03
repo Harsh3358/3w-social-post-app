@@ -1,0 +1,90 @@
+.profile-menu-wrapper {
+  position: relative;
+}
+
+/* Trigger */
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.profile-trigger img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+/* Dropdown */
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  width: 220px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.menu-header {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.menu-header strong {
+  color: #111827;
+}
+
+.signed-in {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Items */
+.menu-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #111827;
+}
+
+.menu-item:hover {
+  background: #eff6ff;          /* light blue hover */
+  color: #2563eb;               /* primary blue */
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 6px 0;
+}
+
+/* Logout */
+.menu-item.logout {
+  color: #dc2626;
+}
+
+.menu-item.logout:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}

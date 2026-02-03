@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRef, useEffect } from "react";
 import "../styles/postCard.css";
 
 function PostCard({ post, currentUser, onLike, onAddComment }) {
@@ -10,6 +11,18 @@ function PostCard({ post, currentUser, onLike, onAddComment }) {
   const image = post?.imageUrl || "";
   const likesCount = Array.isArray(post?.likes) ? post.likes.length : 0;
   const commentsCount = Array.isArray(post?.comments) ? post.comments.length : 0;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  const currentUserId = currentUser?._id || currentUser?.userId;
+
+  const postUserId =
+    typeof post.user === "object" ? post.user?._id : post.user;
+
+  const isOwner =
+    currentUserId && postUserId && currentUserId === postUserId;
+
+
 
   // Determine if current user has liked (safe string comparison)
   const hasLiked =
@@ -41,6 +54,20 @@ function PostCard({ post, currentUser, onLike, onAddComment }) {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+
+
   return (
     <div className="post-card">
       {/* HEADER */}
@@ -52,8 +79,62 @@ function PostCard({ post, currentUser, onLike, onAddComment }) {
             <div className="time">{time}</div>
           </div>
         </div>
-        <div className="menu">⋯</div>
+        <div className="menu" onClick={() => setMenuOpen((prev) => !prev)}>⋯</div>
       </div>
+
+      {/* dropdown menu of ... */}
+      {menuOpen && (
+        <div className="post-menu" ref={menuRef}>
+          {/* Visible to everyone */}
+          <div
+            className="post-menu-item"
+            onClick={() => setMenuOpen(false)}
+          >
+            View
+          </div>
+
+          {/* Non-owner users */}
+          {!isOwner && (
+            <div
+              className="post-menu-item"
+              onClick={() => {
+                setMenuOpen(false);
+                // TODO: report post
+              }}
+            >
+              Report
+            </div>
+          )}
+
+          {/* Owner-only actions */}
+          {isOwner && (
+            <>
+              <div
+                className="post-menu-item"
+                onClick={() => {
+                  setMenuOpen(false);
+                  // TODO: open edit modal
+                }}
+              >
+                Edit
+              </div>
+
+              <div
+                className="post-menu-item danger"
+                onClick={() => {
+                  setMenuOpen(false);
+                  // TODO: delete post
+                }}
+              >
+                Delete
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+
+
 
       {/* TEXT */}
       {content && (

@@ -13,8 +13,6 @@ function Feed() {
   const user = getUser();
 
   const [posts, setPosts] = useState([]);
-  const [text, setText] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -23,29 +21,57 @@ function Feed() {
   // "login" | "register" | null
 
 
+  const uploadImageToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "post_images"); // your preset
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dfa1ujbgd/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Image upload failed");
+    }
+
+    const data = await res.json();
+    return data.secure_url;
+  };
 
   useEffect(() => {
     fetchPosts(1);
   }, []);
 
-  const handleCreatePost = async (content) => {
-    if (!content.trim()) return;
-
+  const handleCreatePost = async ({ text, imageFile }) => {
     try {
       setLoading(true);
 
+      let imageUrl = "";
+
+      // Upload image if user selected one
+      if (imageFile) {
+        imageUrl = await uploadImageToCloudinary(imageFile);
+      }
+
       const res = await api.post("/posts", {
-        text: content.trim(),
-        imageUrl: "",
+        text,
+        imageUrl,
       });
 
+      // Optimistically update feed
       setPosts((prev) => [res.data, ...prev]);
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to create post");
     } finally {
       setLoading(false);
     }
   };
+
 
 
   const handleLike = async (postId) => {
@@ -117,9 +143,6 @@ function Feed() {
             userName={user.name || user.username}
             userAvatar={`https://ui-avatars.com/api/?name=${user.name || user.username}`}
             onPost={handleCreatePost}
-            onAddImage={() => {}}
-            onAddEmoji={() => {}}
-            onAddPoll={() => {}}
             onPromote={() => {}}
           />
         ) : (

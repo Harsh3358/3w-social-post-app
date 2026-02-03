@@ -95,14 +95,15 @@
 
 /* POST BUTTON */
 .post-btn {
-  padding: 6px 16px;
-  border-radius: 20px;
+  padding: 8px 20px;      /* ↑ more height + width */
+  border-radius: 22px;    /* slightly rounder to match size */
   border: none;
   background: #2563eb;
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;        /* slight text boost */
   cursor: pointer;
 }
+
 
 .post-btn:disabled {
   background: #d1d5db;
