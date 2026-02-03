@@ -3,9 +3,11 @@ import api from "../api/axios";
 import { getUser, logout } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import "../styles/feed.css";
+import AuthModal from "../components/AuthModal";
+import PostCard from "../components/PostCard";
+
 
 function Feed() {
-  const navigate = useNavigate();
   const user = getUser();
 
   const [posts, setPosts] = useState([]);
@@ -16,17 +18,14 @@ function Feed() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const LIMIT = 5;
+  const [authModal, setAuthModal] = useState(null); 
+  // "login" | "register" | null
+
 
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
     fetchPosts(1);
   }, []);
-
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
@@ -111,106 +110,108 @@ function Feed() {
       }
     } catch {
       logout();
-      navigate("/login");
+      setAuthModal("login");    }
+  };
+
+  const requireAuth = () => {
+    if (!user) {
+      setAuthModal("login");
+      return false;
     }
+    return true;
   };
 
 
+
   return (
-    <div className="feed-container">
-      <h2>Social Feed</h2>
+    <>
+      <div className="feed-container">
+        <h2>Social Feed</h2>
 
-      {/* Create Post */}
-      <form className="post" onSubmit={handleCreatePost}>
-        <h3>Create Post</h3>
+        {/* Create Post */}
+        {user ? (
+          <form className="post" onSubmit={handleCreatePost}>
+            <h3>Create Post</h3>
 
-        <textarea
-          placeholder="What's on your mind?"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+            <textarea
+              placeholder="What's on your mind?"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
 
-        <input
-          type="text"
-          placeholder="Image URL (optional)"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-        />
+            <input
+              type="text"
+              placeholder="Image URL (optional)"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+            />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Posting..." : "Post"}
-        </button>
-      </form>
-
-      {posts.length === 0 && <p>No posts yet.</p>}
-
-      {/* Feed */}
-      {posts.map((post) => {
-        const hasLiked = post.likes.some(
-          (like) => like.userId === user._id
-        );
-
-        return (
-          <div key={post._id} className="post">
-            <strong>{post.username}</strong>
-
-            {post.text && <p>{post.text}</p>}
-
-            {post.imageUrl && (
-              <img src={post.imageUrl} alt="post" />
-            )}
-
-            {/* Actions */}
-            <div className="post-actions">
-              <button onClick={() => handleLike(post._id)}>
-                {hasLiked ? "💙" : "🤍"} {post.likes.length}
-              </button>
-              <span>💬 {post.comments.length}</span>
-            </div>
-
-            {/* Comments */}
-            <div>
-              {post.comments.map((c, index) => (
-                <div key={index} className="comment">
-                  <b>{c.username}:</b> {c.text}
-                </div>
-              ))}
-
-              <div className="comment-input">
-                <input
-                  type="text"
-                  placeholder="Add a comment..."
-                  value={commentInputs[post._id] || ""}
-                  onChange={(e) =>
-                    handleCommentChange(post._id, e.target.value)
-                  }
-                />
-                <button
-                  onClick={() => handleAddComment(post._id)}
-                  disabled={!commentInputs[post._id]?.trim()}
-                >
-                  Comment
-                </button>
-              </div>
-            </div>
+            <button type="submit" disabled={loading}>
+              {loading ? "Posting..." : "Post"}
+            </button>
+          </form>
+        ) : (
+          <div className="post">
+            <p>Login to create a post</p>
+            <button onClick={() => setAuthModal("login")}>
+              Login / Register
+            </button>
           </div>
-        );
-      })}
+        )}
 
-      {/* load more posts*/}
-      {hasMore && (
-        <button
-          onClick={() => {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            fetchPosts(nextPage);
-          }}
-        >
-          Load more
-        </button>
+        {posts.length === 0 && <p>No posts yet.</p>}
+
+        {/* Feed */}
+        {posts.map((post) => {
+          const hasLiked =
+            user && post.likes.some((like) => like.userId === user._id);
+
+          return (
+            <PostCard
+              key={post._id}
+              username={post.username}
+              time={new Date(post.createdAt).toLocaleString()}
+              content={post.text}
+              image={post.imageUrl}
+              likesCount={post.likes.length}
+              commentsCount={post.comments.length}
+              hasLiked={hasLiked}
+              onLike={() => {
+                if (!requireAuth()) return;
+                handleLike(post._id);
+              }}
+              onComment={() => {
+                if (!requireAuth()) return;
+                // later: focus comment input
+              }}
+            />
+          );
+        })}
+
+
+        {/* load more posts*/}
+        {hasMore && (
+          <button
+            onClick={() => {
+              const nextPage = page + 1;
+              setPage(nextPage);
+              fetchPosts(nextPage);
+            }}
+          >
+            Load more
+          </button>
+        )}
+
+      </div>
+
+      {/* AUTH MODAL (GLOBAL OVERLAY) */}
+      {authModal && (
+        <AuthModal
+          mode={authModal}
+          onClose={() => setAuthModal(null)}            onSuccess={() => setAuthModal(null)}
+        />
       )}
-
-    </div>
+    </>
   );
 }
 
