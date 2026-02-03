@@ -1,0 +1,106 @@
+.navbar {
+  height: 60px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  position: static;
+}
+
+.nav-left .logo {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  margin-left: calc(240px - 24px);
+  gap: 16px;
+}
+
+.search-input {
+  width: 50%;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #f3f4f6;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.badge {
+  background: #fef3c7;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.wallet {
+  background: #ecfdf5;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.profile img {
+  border-radius: 50%;
+}
+
+.nav-chip:hover,
+.icon-btn:hover,
+.profile:hover {
+  background: #f3f4f6;
+}
+
+.tooltip-wrapper {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tooltip-wrapper:hover .tooltip {
+  opacity: 1;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background: red;
+  border-radius: 50%;
+}
+
+.badge,
+.wallet,
+.icon,
+.profile {
+  cursor: pointer;
+}

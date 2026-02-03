@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./CreatePostCard.css";
+import "../styles/createPostCard.css";
 
 function CreatePostCard({
   userName,

@@ -1,6 +1,6 @@
 .feed-container {
-  max-width: 600px;
-  margin: auto;
+  max-width: 700px;
+  margin: 32px auto 0;
 }
 
 .post {
@@ -32,3 +32,14 @@
   gap: 8px;
   margin-top: 6px;
 }
+
+.content {
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+
+
+

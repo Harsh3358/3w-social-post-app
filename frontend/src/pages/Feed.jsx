@@ -109,7 +109,7 @@ function Feed() {
   return (
     <>
       <div className="feed-container">
-        <h2>Social Feed</h2>
+        {/* <h2>Social Feed</h2> */}
 
         {/* Create Post */}
         {user ? (

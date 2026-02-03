@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./PostCard.css";
+import "../styles/postCard.css";
 
 function PostCard({ post, currentUser, onLike, onAddComment }) {
   // Defensive defaults

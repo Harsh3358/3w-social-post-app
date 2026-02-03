@@ -1,0 +1,72 @@
+.sidebar {
+  width: 240px;
+  background: #ffffff;
+  padding: 16px 0;
+  border-right: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+
+.sidebar-item {
+  cursor: default;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #374151;        
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+
+.sidebar-item:hover {
+  background: #f3f4f6;
+}
+
+.sidebar-item .icon {
+  font-size: 18px;
+}
+
+.sidebar-item .count {
+  margin-left: auto;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.sidebar-item.active {
+  background: #e0f2fe;      
+  color: #0284c7;           
+  font-weight: 600;
+}
+
+.sidebar-item.active,
+.sidebar-item[data-clickable="true"] {
+  cursor: pointer;
+}
+
+.sidebar-item.active::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  background: #0284c7;
+  border-radius: 2px;
+}
+
+.body {
+  display: flex;               /* ensure sidebar + content are side-by-side */
+  align-items: flex-start;     /* IMPORTANT: prevents vertical centering */
+  height: calc(100vh - 60px);  /* make body fill the space under navbar (navbar is 60px) */
+}
+
+.content {
+  flex: 1;                             /* take remaining horizontal space */
+  padding: 24px;                       /* consistent spacing from top/left/right */
+  box-sizing: border-box;
+  min-height: calc(100vh - 60px);      /* ensures the column spans the viewport under navbar */
+  overflow-y: auto;                     /* scrolls the feed area independently */
+  background: #f9fafb;                   
+}
+

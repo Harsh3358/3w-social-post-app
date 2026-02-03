@@ -6,8 +6,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Feed />} />
+        {/* Layout as parent */}
+        <Route path="/" element={<Layout />}>
+          
+          {/* Feed renders INSIDE Layout */}
+          <Route index element={<Feed />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
