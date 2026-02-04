@@ -7,7 +7,7 @@ const router = express.Router();
 
 // POST /api/posts
 router.post("/", auth, async (req, res) => {
-    console.log("POST /api/posts called");
+  console.log("POST /api/posts called");
   console.log("Authorization header:", req.headers.authorization);
   console.log("req.user (from auth):", req.user && req.user.name);
   console.log("req.body:", req.body);
